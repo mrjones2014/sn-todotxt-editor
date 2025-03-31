@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { createGlobalStyle } from "styled-components";
-import { serializeFile, serializeLine } from "todos/parser";
+import { deserializeFile, serializeFile, serializeLine } from "todos/parser";
 import { TodoItem } from "todos/types";
 import {
   ActionButtons,
@@ -48,12 +48,12 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 interface TodoEditorProps {
-  todos: TodoItem[];
-  onTodosChanged: (todos: TodoItem[]) => void;
+  fileContents: string;
+  onFileChanged: (fileContents: string) => void;
 }
 
-const TodoEditor = (props: TodoEditorProps) => {
-  const [todos, setTodos] = useState<TodoItem[]>(props.todos);
+const TodoEditor = ({ fileContents, onFileChanged }: TodoEditorProps) => {
+  const [todos, setTodos] = useState<TodoItem[]>(deserializeFile(fileContents));
   const [filter, setFilter] = useState<"all" | "active" | "completed">("active");
   const [activeProject, setActiveProject] = useState<string | null>(null);
   const [activeContext, setActiveContext] = useState<string | null>(null);
@@ -61,7 +61,7 @@ const TodoEditor = (props: TodoEditorProps) => {
   const [editingTodoIndex, setEditingTodoIndex] = useState<number | null>(null);
 
   useEffect(() => {
-    props.onTodosChanged(todos);
+    onFileChanged(serializeFile(todos));
   }, [todos]);
 
   const onSave = (todo: TodoItem, index?: number) => {

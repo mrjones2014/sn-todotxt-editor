@@ -1,15 +1,14 @@
 import { useEffect, useState } from "react";
 import snApi from "sn-extension-api";
-import { deserializeFile, serializeFile } from "todos/parser";
 import TodoEditor from "./TodoEditor";
 
 const StandardNotesTodoTxtEditor = () => {
-  const [todos, setTodos] = useState(deserializeFile(snApi.text));
+  const [file, setFile] = useState(snApi.text);
   useEffect(() => {
-    snApi.text = serializeFile(todos);
-  }, [todos]);
+    snApi.text = file;
+  }, [file]);
 
-  return <TodoEditor todos={todos} onTodosChanged={setTodos} />;
+  return <TodoEditor fileContents={file} onFileChanged={setFile} />;
 };
 
 export default StandardNotesTodoTxtEditor;
