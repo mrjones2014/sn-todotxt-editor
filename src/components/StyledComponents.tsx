@@ -377,13 +377,15 @@ export const RemoveTagButton = styled.button`
 `;
 
 export const MetadataInputGroup = styled.div`
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
   gap: 8px;
   margin-top: 8px;
+  width: 100%;
 `;
 
 export const MetadataKeyInput = styled.input`
-  flex: 1;
+  min-width: 0; /* Critical to prevent overflow */
   padding: 8px 12px;
   border: 1px solid var(--sn-stylekit-border-color);
   border-radius: 4px;
@@ -396,7 +398,7 @@ export const MetadataKeyInput = styled.input`
 `;
 
 export const MetadataValueInput = styled.input`
-  flex: 1;
+  min-width: 0; /* Critical to prevent overflow */
   padding: 8px 12px;
   border: 1px solid var(--sn-stylekit-border-color);
   border-radius: 4px;
