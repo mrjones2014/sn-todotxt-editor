@@ -3,14 +3,12 @@ import { createGlobalStyle } from "styled-components";
 import { serializeFile, serializeLine } from "todos/parser";
 import { TodoItem } from "todos/types";
 import {
-  MetadataKeyInput,
   ActionButtons,
   AddTaskButton,
   AppContainer,
   Badge,
   Button,
   Checkbox,
-  CloseButton,
   ContextTag,
   DateTag,
   EmptyState,
@@ -19,22 +17,12 @@ import {
   FilterItem,
   FilterSection,
   FilterTitle,
-  FormGroup,
   Header,
   IconButton,
-  Input,
-  Label,
   MainContent,
   MetadataTag,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalTitle,
   PriorityTag,
   ProjectTag,
-  SecondaryButton,
   Sidebar,
   Title,
   TodoContent,
@@ -42,16 +30,8 @@ import {
   TodoItemContainer,
   TodoList,
   TodoMeta,
-  Select,
-  TagsContainer,
-  Tag,
-  RemoveTagButton,
-  TagInput,
-  TagInputField,
-  AddButton,
-  MetadataInputGroup,
-  MetadataValueInput,
 } from "./StyledComponents";
+import NewTodoModal from "./NewTodoModal";
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -80,20 +60,27 @@ const TodoEditor = (props: TodoEditorProps) => {
   const [showModal, setShowModal] = useState(false);
   const [editingTodoIndex, setEditingTodoIndex] = useState<number | null>(null);
 
-  // Form state
-  const [taskDescription, setTaskDescription] = useState("");
-  const [taskPriority, setTaskPriority] = useState("");
-  const [taskProjects, setTaskProjects] = useState<string[]>([]);
-  const [taskContexts, setTaskContexts] = useState<string[]>([]);
-  const [taskMetadata, setTaskMetadata] = useState<Record<string, string>>({});
-  const [newProject, setNewProject] = useState("");
-  const [newContext, setNewContext] = useState("");
-  const [newMetadataKey, setNewMetadataKey] = useState("");
-  const [newMetadataValue, setNewMetadataValue] = useState("");
-
   useEffect(() => {
     props.onTodosChanged(todos);
   }, [todos]);
+
+  const onSave = (todo: TodoItem, index?: number) => {
+    if (index != null) {
+      let newTodos = [...todos];
+      newTodos[index] = todo;
+      setTodos(newTodos);
+    } else {
+      let newTodos = [todo, ...todos];
+      setTodos(newTodos);
+    }
+
+    setShowModal(false);
+  };
+
+  const onCancel = () => {
+    setEditingTodoIndex(null);
+    setShowModal(false);
+  };
 
   // Get all unique projects
   const projects = useMemo(() => {
@@ -157,11 +144,6 @@ const TodoEditor = (props: TodoEditorProps) => {
   // Open modal to add new task
   const openAddTaskModal = () => {
     setEditingTodoIndex(null);
-    setTaskDescription("");
-    setTaskPriority("");
-    setTaskProjects([]);
-    setTaskContexts([]);
-    setTaskMetadata({});
     setShowModal(true);
   };
 
@@ -169,97 +151,9 @@ const TodoEditor = (props: TodoEditorProps) => {
   const openEditTaskModal = (index: number) => {
     const todoIndex = todos.findIndex((t) => t === filteredTodos[index]);
     if (todoIndex !== -1) {
-      const todo = todos[todoIndex];
       setEditingTodoIndex(todoIndex);
-      setTaskDescription(todo.description);
-      setTaskPriority(todo.priority || "");
-      setTaskProjects([...todo.projects]);
-      setTaskContexts([...todo.contexts]);
-      setTaskMetadata({ ...todo.metadata });
       setShowModal(true);
     }
-  };
-
-  // Close modal
-  const closeModal = () => {
-    setShowModal(false);
-  };
-
-  // Add project to task
-  const addProject = () => {
-    if (newProject.trim() && !taskProjects.includes(newProject.trim())) {
-      setTaskProjects([...taskProjects, newProject.trim()]);
-      setNewProject("");
-    }
-  };
-
-  // Remove project from task
-  const removeProject = (project: string) => {
-    setTaskProjects(taskProjects.filter((p) => p !== project));
-  };
-
-  // Add context to task
-  const addContext = () => {
-    if (newContext.trim() && !taskContexts.includes(newContext.trim())) {
-      setTaskContexts([...taskContexts, newContext.trim()]);
-      setNewContext("");
-    }
-  };
-
-  // Remove context from task
-  const removeContext = (context: string) => {
-    setTaskContexts(taskContexts.filter((c) => c !== context));
-  };
-
-  // Add metadata to task
-  const addMetadata = () => {
-    if (newMetadataKey.trim() && newMetadataValue.trim()) {
-      setTaskMetadata({
-        ...taskMetadata,
-        [newMetadataKey.trim()]: newMetadataValue.trim(),
-      });
-      setNewMetadataKey("");
-      setNewMetadataValue("");
-    }
-  };
-
-  // Remove metadata from task
-  const removeMetadata = (key: string) => {
-    const newMetadata = { ...taskMetadata };
-    delete newMetadata[key];
-    setTaskMetadata(newMetadata);
-  };
-
-  // Save task
-  const saveTask = () => {
-    if (!taskDescription.trim()) return;
-
-    // Create new todo item
-    const newTodo: TodoItem = {
-      raw: "",
-      completed: false,
-      description: taskDescription.trim(),
-      priority: taskPriority || undefined,
-      creationDate: new Date(),
-      projects: taskProjects,
-      contexts: taskContexts,
-      metadata: taskMetadata,
-    };
-
-    // Update raw string
-    newTodo.raw = serializeLine(newTodo);
-
-    if (editingTodoIndex !== null) {
-      // Update existing todo
-      const newTodos = [...todos];
-      newTodos[editingTodoIndex] = newTodo;
-      setTodos(newTodos);
-    } else {
-      // Add new todo
-      setTodos([...todos, newTodo]);
-    }
-
-    closeModal();
   };
 
   // Delete task
@@ -442,105 +336,11 @@ const TodoEditor = (props: TodoEditorProps) => {
 
       {/* Task Modal */}
       {showModal && (
-        <Modal>
-          <ModalContent>
-            <ModalHeader>
-              <ModalTitle>{editingTodoIndex !== null ? "Edit Task" : "Add New Task"}</ModalTitle>
-              <CloseButton onClick={closeModal}>×</CloseButton>
-            </ModalHeader>
-            <ModalBody>
-              <FormGroup>
-                <Label>Task Description</Label>
-                <Input
-                  value={taskDescription}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTaskDescription(e.target.value)}
-                  placeholder="What needs to be done?"
-                  autoFocus
-                />
-              </FormGroup>
-
-              <FormGroup>
-                <Label>Priority</Label>
-                <Select value={taskPriority} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setTaskPriority(e.target.value)}>
-                  <option value="">No Priority</option>
-                  {["A", "B", "C", "D", "E"].map((priority) => (
-                    <option key={priority} value={priority}>
-                      Priority {priority}
-                    </option>
-                  ))}
-                </Select>
-              </FormGroup>
-
-              <FormGroup>
-                <Label>Projects</Label>
-                <TagsContainer>
-                  {taskProjects.map((project) => (
-                    <Tag key={project}>
-                      +{project}
-                      <RemoveTagButton onClick={() => removeProject(project)}>×</RemoveTagButton>
-                    </Tag>
-                  ))}
-                </TagsContainer>
-                <TagInput>
-                  <TagInputField
-                    value={newProject}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewProject(e.target.value)}
-                    placeholder="Add project..."
-                    onKeyDown={(e: React.KeyboardEvent) => e.key === "Enter" && addProject()}
-                  />
-                  <AddButton onClick={addProject}>Add</AddButton>
-                </TagInput>
-              </FormGroup>
-
-              <FormGroup>
-                <Label>Contexts</Label>
-                <TagsContainer>
-                  {taskContexts.map((context) => (
-                    <Tag key={context}>
-                      @{context}
-                      <RemoveTagButton onClick={() => removeContext(context)}>×</RemoveTagButton>
-                    </Tag>
-                  ))}
-                </TagsContainer>
-                <TagInput>
-                  <TagInputField
-                    value={newContext}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewContext(e.target.value)}
-                    placeholder="Add context..."
-                    onKeyDown={(e: React.KeyboardEvent) => e.key === "Enter" && addContext()}
-                  />
-                  <AddButton onClick={addContext}>Add</AddButton>
-                </TagInput>
-              </FormGroup>
-
-              <FormGroup>
-                <Label>Metadata</Label>
-                <TagsContainer>
-                  {Object.entries(taskMetadata).map(([key, value]) => (
-                    <Tag key={key}>
-                      {key}:{value}
-                      <RemoveTagButton onClick={() => removeMetadata(key)}>×</RemoveTagButton>
-                    </Tag>
-                  ))}
-                </TagsContainer>
-                <MetadataInputGroup>
-                  <MetadataKeyInput value={newMetadataKey} onChange={(e) => setNewMetadataKey(e.target.value)} placeholder="Key" />
-                  <MetadataValueInput
-                    value={newMetadataValue}
-                    onChange={(e) => setNewMetadataValue(e.target.value)}
-                    placeholder="Value"
-                    onKeyDown={(e) => e.key === "Enter" && addMetadata()}
-                  />
-                  <AddButton onClick={addMetadata}>Add</AddButton>
-                </MetadataInputGroup>
-              </FormGroup>
-            </ModalBody>
-            <ModalFooter>
-              <SecondaryButton onClick={closeModal}>Cancel</SecondaryButton>
-              <Button onClick={saveTask}>{editingTodoIndex !== null ? "Update Task" : "Add Task"}</Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
+        <NewTodoModal
+          onSave={onSave}
+          onCancel={onCancel}
+          editContext={editingTodoIndex != null ? { index: editingTodoIndex, item: todos[editingTodoIndex] } : undefined}
+        />
       )}
     </>
   );
