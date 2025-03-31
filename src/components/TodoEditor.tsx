@@ -193,7 +193,7 @@ const TodoEditor = ({ fileContents, onFileChanged }: TodoEditorProps) => {
             <FilterSection>
               <FilterTitle>Filters</FilterTitle>
               <FilterItem
-                active={filter === "active" && !activeProject && !activeContext}
+                active={filter === "active"}
                 onClick={() => {
                   setFilter("active");
                   setActiveProject(null);
@@ -204,7 +204,7 @@ const TodoEditor = ({ fileContents, onFileChanged }: TodoEditorProps) => {
                 <Badge>{todos.filter((t) => !t.completed).length}</Badge>
               </FilterItem>
               <FilterItem
-                active={filter === "completed" && !activeProject && !activeContext}
+                active={filter === "completed"}
                 onClick={() => {
                   setFilter("completed");
                   setActiveProject(null);
@@ -215,7 +215,7 @@ const TodoEditor = ({ fileContents, onFileChanged }: TodoEditorProps) => {
                 <Badge>{todos.filter((t) => t.completed).length}</Badge>
               </FilterItem>
               <FilterItem
-                active={filter === "all" && !activeProject && !activeContext}
+                active={filter === "all"}
                 onClick={() => {
                   setFilter("all");
                   setActiveProject(null);
@@ -236,7 +236,6 @@ const TodoEditor = ({ fileContents, onFileChanged }: TodoEditorProps) => {
                     active={activeProject === project}
                     onClick={() => {
                       setActiveProject(activeProject === project ? null : project);
-                      setActiveContext(null);
                     }}
                   >
                     +{project}
@@ -255,7 +254,6 @@ const TodoEditor = ({ fileContents, onFileChanged }: TodoEditorProps) => {
                     active={activeContext === context}
                     onClick={() => {
                       setActiveContext(activeContext === context ? null : context);
-                      setActiveProject(null);
                     }}
                   >
                     @{context}
