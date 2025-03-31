@@ -6,6 +6,10 @@ export const AppContainer = styled.div`
   height: 100vh;
   margin: 0 auto;
   padding: 20px;
+
+  @media (min-width: 769px) {
+    margin-left: 250px;
+  }
 `;
 
 export const Button = styled.button`
