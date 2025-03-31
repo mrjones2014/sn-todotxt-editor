@@ -1,6 +1,6 @@
 {
   description =
-    "Node.js development environment with pnpm, TypeScript, esbuild, and Tailwind CSS";
+    "Node.js development environment for Standard Notes editor extension";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -11,7 +11,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, flake-utils, ... }:
+  outputs = { nixpkgs, flake-utils, ... }:
     flake-utils.lib.eachDefaultSystem (system:
       let pkgs = nixpkgs.legacyPackages.${system};
       in {
@@ -21,7 +21,6 @@
             nodePackages.pnpm
             nodePackages.typescript
             nodePackages.typescript-language-server
-            tailwindcss-language-server
           ];
 
           # Add .gitignore patterns to avoid copying unnecessary files to the Nix store
