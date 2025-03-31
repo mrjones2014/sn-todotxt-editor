@@ -3,6 +3,7 @@ import { createGlobalStyle } from "styled-components";
 import { deserializeFile, serializeFile, serializeLine } from "todos/parser";
 import { TodoItem } from "todos/types";
 import {
+  MenuButton,
   ActionButtons,
   AddTaskButton,
   AppContainer,
@@ -17,6 +18,7 @@ import {
   FilterItem,
   FilterSection,
   FilterTitle,
+  HamburgerIcon,
   IconButton,
   MainContent,
   MetadataTag,
@@ -28,6 +30,9 @@ import {
   TodoItemContainer,
   TodoList,
   TodoMeta,
+  SidebarContent,
+  Overlay,
+  MainControlsContainer,
 } from "./StyledComponents";
 import NewTodoModal from "./NewTodoModal";
 import Fuse from "fuse.js";
@@ -54,6 +59,7 @@ interface TodoEditorProps {
 }
 
 const TodoEditor = ({ fileContents, onFileChanged, editingDisabled }: TodoEditorProps) => {
+  const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth > 768);
   const [todos, setTodos] = useState<TodoItem[]>(deserializeFile(fileContents));
   const [filter, setFilter] = useState<"all" | "active" | "completed">("active");
   const [activeProject, setActiveProject] = useState<string | null>(null);
@@ -65,6 +71,21 @@ const TodoEditor = ({ fileContents, onFileChanged, editingDisabled }: TodoEditor
   useEffect(() => {
     onFileChanged(serializeFile(todos));
   }, [todos]);
+
+  const handleOverlayClick = () => {
+    if (window.innerWidth <= 768) {
+      setSidebarOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    const handleResize = () => {
+      setSidebarOpen(window.innerWidth > 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const onSave = (todo: TodoItem, index?: number) => {
     if (index != null) {
@@ -171,17 +192,13 @@ const TodoEditor = ({ fileContents, onFileChanged, editingDisabled }: TodoEditor
     <>
       <GlobalStyle />
 
-      <AppContainer>
-        <SearchBar value={searchText} onChange={setSearchText} />
+      <MenuButton onClick={() => setSidebarOpen(!sidebarOpen)}>
+        <HamburgerIcon />
+      </MenuButton>
 
-        <MainContent>
-          <Sidebar>
-            {!editingDisabled && (
-              <AddTaskButton onClick={openAddTaskModal}>
-                <span>+ Add Task</span>
-              </AddTaskButton>
-            )}
-
+      <AppContainer sidebarOpen={sidebarOpen}>
+        <Sidebar isOpen={sidebarOpen}>
+          <SidebarContent>
             <FilterSection>
               <FilterTitle>Filters</FilterTitle>
               <FilterItem
@@ -254,7 +271,19 @@ const TodoEditor = ({ fileContents, onFileChanged, editingDisabled }: TodoEditor
                 ))}
               </FilterSection>
             )}
-          </Sidebar>
+          </SidebarContent>
+        </Sidebar>
+        <Overlay isOpen={sidebarOpen && window.innerWidth <= 768} onClick={handleOverlayClick} />
+
+        <MainContent>
+          <MainControlsContainer>
+            <SearchBar value={searchText} onChange={setSearchText} />
+            {!editingDisabled && (
+              <AddTaskButton onClick={openAddTaskModal}>
+                <span>+ Add Task</span>
+              </AddTaskButton>
+            )}
+          </MainControlsContainer>
 
           <TodoList>
             {filteredTodos.length === 0 ? (

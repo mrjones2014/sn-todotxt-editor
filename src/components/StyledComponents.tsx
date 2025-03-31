@@ -1,11 +1,11 @@
 import styled from "styled-components";
 
-export const AppContainer = styled.div`
+export const AppContainer = styled.div<{ sidebarOpen: boolean }>`
   display: flex;
   flex-direction: column;
   height: 100vh;
-  max-width: 1000px;
   margin: 0 auto;
+  margin-left: ${(props) => (props.sidebarOpen ? "250px" : "0")};
   padding: 20px;
 `;
 
@@ -43,16 +43,98 @@ export const SecondaryButton = styled(Button)`
 `;
 
 export const MainContent = styled.main`
-  display: flex;
   flex: 1;
-  margin-top: 20px;
-  overflow: hidden;
+  transition: margin-left 0.3s ease;
+
+  @media (max-width: 768px) {
+    margin-left: 0;
+    width: 100%;
+  }
 `;
 
-export const Sidebar = styled.aside`
-  width: 220px;
-  padding-right: 20px;
-  overflow-y: auto;
+export const Overlay = styled.div<{ isOpen: boolean }>`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  display: ${(props) => (props.isOpen ? "block" : "none")};
+
+  @media (min-width: 769px) {
+    display: none;
+  }
+`;
+
+export const HamburgerIcon = () => (
+  <svg
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <line x1="3" y1="12" x2="21" y2="12"></line>
+    <line x1="3" y1="6" x2="21" y2="6"></line>
+    <line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+);
+
+export const Sidebar = styled.aside<{ isOpen: boolean }>`
+  width: ${(props) => (props.isOpen ? "250px" : "0")};
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: var(--sn-stylekit-contrast-background-color, #2a2a2a);
+  transition:
+    width 0.3s ease,
+    transform 0.3s ease;
+  overflow-x: hidden;
+  z-index: 1000;
+  box-shadow: ${(props) => (props.isOpen ? "0 0 10px rgba(0, 0, 0, 0.2)" : "none")};
+  /* On mobile, sidebar slides in from left */
+  @media (max-width: 768px) {
+    width: 250px;
+    transform: ${(props) => (props.isOpen ? "translateX(0)" : "translateX(-100%)")};
+  }
+`;
+
+export const SidebarContent = styled.div`
+  width: 250px;
+  padding: 20px;
+  padding-top: 75px;
+`;
+
+export const MenuButton = styled.button`
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 1001;
+  background: var(--sn-stylekit-info-color, #4a90e2);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background: var(--sn-stylekit-info-color-hover, #3a80d2);
+  }
+
+  /* Hide on desktop */
+  @media (min-width: 769px) {
+    display: none;
+  }
 `;
 
 export const TodoList = styled.div`
@@ -184,10 +266,17 @@ export const DateTag = styled.span`
   font-size: 12px;
 `;
 
+export const MainControlsContainer = styled.div`
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+`;
+
 export const AddTaskButton = styled(Button)`
-  width: 100%;
   justify-content: center;
-  margin-bottom: 10px;
+  height: 46px;
+  margin: 16px 0;
 `;
 
 export const EmptyState = styled.div`
@@ -463,8 +552,8 @@ export const Select = styled.select`
 
 export const SearchContainer = styled.div`
   position: relative;
-  width: 100%; /* Full width */
-  margin: 16px 0; /* Adjusted margins */
+  width: 100%;
+  margin: 16px 0;
 `;
 
 export const SearchInput = styled.input`
