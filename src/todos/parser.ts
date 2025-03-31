@@ -11,13 +11,14 @@ export const deserializeFile = (fileContent: string): TodoItem[] => {
 /**
  * Parse a single line from a todo.txt file
  */
-const deserializeLine = (line: string): TodoItem => {
+export const deserializeLine = (line: string): TodoItem => {
   // Initial state
   let remaining = line;
   let completed = false;
   let completionDate: Date | undefined;
   let priority: string | undefined;
   let creationDate: Date | undefined;
+  let description = "";
 
   // Check if task is completed
   if (remaining.startsWith("x ")) {
@@ -46,10 +47,34 @@ const deserializeLine = (line: string): TodoItem => {
     remaining = remaining.substring(creationDateMatch[0].length);
   }
 
+  // At this point, 'remaining' contains the description and any tags/metadata
+  description = remaining;
+
   // Extract projects, contexts, and metadata
   const projects = extractProjects(remaining);
   const contexts = extractContexts(remaining);
   const metadata = extractMetadata(remaining);
+
+  // Clean up the description by removing projects, contexts, and metadata
+  let cleanDescription = description;
+
+  // Remove projects
+  projects.forEach((project) => {
+    cleanDescription = cleanDescription.replace(new RegExp(`\\s\\+${project}\\b`, "g"), "");
+  });
+
+  // Remove contexts
+  contexts.forEach((context) => {
+    cleanDescription = cleanDescription.replace(new RegExp(`\\s@${context}\\b`, "g"), "");
+  });
+
+  // Remove metadata
+  Object.entries(metadata).forEach(([key, value]) => {
+    cleanDescription = cleanDescription.replace(new RegExp(`\\s${key}:${value}\\b`, "g"), "");
+  });
+
+  // Trim any extra whitespace
+  cleanDescription = cleanDescription.trim();
 
   return {
     raw: line,
@@ -57,7 +82,7 @@ const deserializeLine = (line: string): TodoItem => {
     completionDate,
     priority,
     creationDate,
-    description: remaining,
+    description: cleanDescription, // Use the cleaned description
     projects,
     contexts,
     metadata,
@@ -103,7 +128,7 @@ const formatDate = (date: Date): string => {
 /**
  * Convert a TodoItem back to a todo.txt line format
  */
-const serializeLine = (item: TodoItem): string => {
+export const serializeLine = (item: TodoItem): string => {
   const parts: string[] = [];
 
   // Add completion marker and date
