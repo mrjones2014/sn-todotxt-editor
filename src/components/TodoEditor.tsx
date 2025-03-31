@@ -32,6 +32,8 @@ import {
   TodoMeta,
 } from "./StyledComponents";
 import NewTodoModal from "./NewTodoModal";
+import Fuse from "fuse.js";
+import SearchBar from "./SearchBar";
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -59,6 +61,7 @@ const TodoEditor = ({ fileContents, onFileChanged }: TodoEditorProps) => {
   const [activeContext, setActiveContext] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [editingTodoIndex, setEditingTodoIndex] = useState<number | null>(null);
+  const [searchText, setSearchText] = useState("");
 
   useEffect(() => {
     onFileChanged(serializeFile(todos));
@@ -99,7 +102,13 @@ const TodoEditor = ({ fileContents, onFileChanged }: TodoEditorProps) => {
   }, [todos]);
 
   const filteredTodos = useMemo(() => {
-    return todos.filter((todo) => {
+    let filtered = todos;
+    let fuse: Fuse<TodoItem>;
+    if (searchText != "") {
+      fuse = new Fuse(todos, { keys: ["raw"] });
+      filtered = fuse.search(searchText).map((result) => result.item);
+    }
+    return filtered.filter((todo) => {
       if (filter === "active" && todo.completed) return false;
       if (filter === "completed" && !todo.completed) return false;
 
@@ -109,7 +118,7 @@ const TodoEditor = ({ fileContents, onFileChanged }: TodoEditorProps) => {
 
       return true;
     });
-  }, [todos, filter, activeProject, activeContext]);
+  }, [todos, searchText, filter, activeProject, activeContext]);
 
   const toggleTodoCompletion = (index: number) => {
     const newTodos = [...todos];
@@ -183,6 +192,8 @@ const TodoEditor = ({ fileContents, onFileChanged }: TodoEditorProps) => {
             <span>Export todo.txt</span>
           </Button>
         </Header>
+
+        <SearchBar value={searchText} onChange={setSearchText} />
 
         <MainContent>
           <Sidebar>
@@ -274,6 +285,7 @@ const TodoEditor = ({ fileContents, onFileChanged }: TodoEditorProps) => {
                     setFilter("all");
                     setActiveProject(null);
                     setActiveContext(null);
+                    setSearchText("");
                   }}
                 >
                   Clear filters

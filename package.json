@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@preact/compat": "^18.3.1",
+    "fuse.js": "^7.1.0",
     "preact": "^10.26.4",
     "sn-extension-api": "0.3.4",
     "styled-components": "^6.1.16"
