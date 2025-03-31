@@ -192,11 +192,7 @@ const TodoEditor = ({ fileContents, onFileChanged, editingDisabled }: TodoEditor
     <>
       <GlobalStyle />
 
-      <MenuButton onClick={() => setSidebarOpen(!sidebarOpen)}>
-        <HamburgerIcon />
-      </MenuButton>
-
-      <AppContainer sidebarOpen={sidebarOpen}>
+      <AppContainer>
         <Sidebar isOpen={sidebarOpen}>
           <SidebarContent>
             <FilterSection>
@@ -277,6 +273,9 @@ const TodoEditor = ({ fileContents, onFileChanged, editingDisabled }: TodoEditor
 
         <MainContent>
           <MainControlsContainer>
+            <MenuButton onClick={() => setSidebarOpen(!sidebarOpen)}>
+              <HamburgerIcon />
+            </MenuButton>
             <SearchBar value={searchText} onChange={setSearchText} />
             {!editingDisabled && (
               <AddTaskButton onClick={openAddTaskModal}>

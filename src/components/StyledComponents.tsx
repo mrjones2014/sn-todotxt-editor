@@ -1,11 +1,10 @@
 import styled from "styled-components";
 
-export const AppContainer = styled.div<{ sidebarOpen: boolean }>`
+export const AppContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100vh;
   margin: 0 auto;
-  margin-left: ${(props) => (props.sidebarOpen ? "250px" : "0")};
   padding: 20px;
 `;
 
@@ -108,33 +107,6 @@ export const SidebarContent = styled.div`
   width: 250px;
   padding: 20px;
   padding-top: 75px;
-`;
-
-export const MenuButton = styled.button`
-  position: fixed;
-  top: 16px;
-  left: 16px;
-  z-index: 1001;
-  background: var(--sn-stylekit-info-color, #4a90e2);
-  color: white;
-  border: none;
-  border-radius: 4px;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background-color 0.2s;
-
-  &:hover {
-    background: var(--sn-stylekit-info-color-hover, #3a80d2);
-  }
-
-  /* Hide on desktop */
-  @media (min-width: 769px) {
-    display: none;
-  }
 `;
 
 export const TodoList = styled.div`
@@ -268,15 +240,45 @@ export const DateTag = styled.span`
 
 export const MainControlsContainer = styled.div`
   display: grid;
-  grid-template-columns: 1fr auto;
+  /* Mobile layout (menu + search + add button) */
+  grid-template-columns: auto 1fr auto;
   gap: 12px;
   align-items: center;
+  padding: 0 16px;
+
+  @media (min-width: 769px) {
+    /* Desktop layout (search + add button) */
+    grid-template-columns: 1fr auto;
+  }
 `;
 
 export const AddTaskButton = styled(Button)`
   justify-content: center;
-  height: 46px;
-  margin: 16px 0;
+  height: 44px;
+  white-space: nowrap;
+`;
+
+export const MenuButton = styled.button`
+  background: var(--sn-stylekit-info-color, #4a90e2);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background: var(--sn-stylekit-info-color-hover, #3a80d2);
+  }
+
+  /* Hide on desktop */
+  @media (min-width: 769px) {
+    display: none;
+  }
 `;
 
 export const EmptyState = styled.div`
