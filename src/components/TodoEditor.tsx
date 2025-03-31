@@ -56,10 +56,11 @@ interface TodoEditorProps {
   fileContents: string;
   onFileChanged: (fileContents: string) => void;
   editingDisabled: boolean;
+  isMobile: boolean;
 }
 
-const TodoEditor = ({ fileContents, onFileChanged, editingDisabled }: TodoEditorProps) => {
-  const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth > 768);
+const TodoEditor = ({ fileContents, onFileChanged, editingDisabled, isMobile }: TodoEditorProps) => {
+  const [sidebarOpen, setSidebarOpen] = useState(isMobile || window.innerWidth > 768);
   const [todos, setTodos] = useState<TodoItem[]>(deserializeFile(fileContents));
   const [filter, setFilter] = useState<"all" | "active" | "completed">("active");
   const [activeProject, setActiveProject] = useState<string | null>(null);
@@ -79,6 +80,8 @@ const TodoEditor = ({ fileContents, onFileChanged, editingDisabled }: TodoEditor
   };
 
   useEffect(() => {
+    if (isMobile) return;
+
     const handleResize = () => {
       setSidebarOpen(window.innerWidth > 768);
     };
