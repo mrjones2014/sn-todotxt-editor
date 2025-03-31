@@ -213,7 +213,9 @@ const NewTodoModal = ({ onSave, onCancel, editContext }: NewTodoModalProps) => {
         </ModalBody>
         <ModalFooter>
           <SecondaryButton onClick={onCancel}>Cancel</SecondaryButton>
-          <Button onClick={saveTask}>{!!editContext ? "Update Task" : "Add Task"}</Button>
+          <Button onClick={saveTask} disabled={taskDescription == ""}>
+            {!!editContext ? "Update Task" : "Add Task"}
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

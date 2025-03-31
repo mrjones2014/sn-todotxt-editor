@@ -42,6 +42,7 @@ export const Button = styled.button`
 
   &:disabled {
     background-color: var(--sn-stylekit-passive-color-3);
+    color: var(--sn-stylekit-passive-color-1);
     cursor: not-allowed;
   }
 `;
@@ -298,6 +299,8 @@ export const Label = styled.label`
 export const Input = styled.input`
   width: 100%;
   padding: 10px 12px;
+  background-color: var(--sn-stylekit-contrast-background-color, #2a2a2a);
+  color: var(--sn-stylekit-foreground-color, #ffffff);
   border: 1px solid var(--sn-stylekit-border-color);
   border-radius: 4px;
   font-size: 14px;
@@ -326,6 +329,8 @@ export const TagInputField = styled.input`
   flex: 1;
   padding: 8px 12px;
   border: 1px solid var(--sn-stylekit-border-color);
+  background-color: var(--sn-stylekit-contrast-background-color, #2a2a2a);
+  color: var(--sn-stylekit-foreground-color, #ffffff);
   border-radius: 4px;
   font-size: 14px;
 
@@ -388,6 +393,8 @@ export const MetadataKeyInput = styled.input`
   min-width: 0; /* Critical to prevent overflow */
   padding: 8px 12px;
   border: 1px solid var(--sn-stylekit-border-color);
+  background-color: var(--sn-stylekit-contrast-background-color, #2a2a2a);
+  color: var(--sn-stylekit-foreground-color, #ffffff);
   border-radius: 4px;
   font-size: 14px;
 
@@ -401,6 +408,8 @@ export const MetadataValueInput = styled.input`
   min-width: 0; /* Critical to prevent overflow */
   padding: 8px 12px;
   border: 1px solid var(--sn-stylekit-border-color);
+  background-color: var(--sn-stylekit-contrast-background-color, #2a2a2a);
+  color: var(--sn-stylekit-foreground-color, #ffffff);
   border-radius: 4px;
   font-size: 14px;
 
