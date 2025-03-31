@@ -17,14 +17,12 @@ import {
   FilterItem,
   FilterSection,
   FilterTitle,
-  Header,
   IconButton,
   MainContent,
   MetadataTag,
   PriorityTag,
   ProjectTag,
   Sidebar,
-  Title,
   TodoContent,
   TodoDescription,
   TodoItemContainer,
@@ -163,19 +161,6 @@ const TodoEditor = ({ fileContents, onFileChanged }: TodoEditorProps) => {
     }
   };
 
-  const exportTodoTxt = () => {
-    const content = serializeFile(todos);
-    const blob = new Blob([content], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "todo.txt";
-    a.click();
-
-    URL.revokeObjectURL(url);
-  };
-
   const formatDate = (date?: Date) => {
     if (!date) return "";
     return date.toISOString().split("T")[0];
@@ -186,13 +171,6 @@ const TodoEditor = ({ fileContents, onFileChanged }: TodoEditorProps) => {
       <GlobalStyle />
 
       <AppContainer>
-        <Header>
-          <Title>Todo.txt Editor</Title>
-          <Button onClick={exportTodoTxt}>
-            <span>Export todo.txt</span>
-          </Button>
-        </Header>
-
         <SearchBar value={searchText} onChange={setSearchText} />
 
         <MainContent>

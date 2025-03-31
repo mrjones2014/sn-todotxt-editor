@@ -9,20 +9,6 @@ export const AppContainer = styled.div`
   padding: 20px;
 `;
 
-export const Header = styled.header`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 20px;
-  border-bottom: 1px solid var(--sn-stylekit-border-color);
-`;
-
-export const Title = styled.h1`
-  font-size: 24px;
-  font-weight: 500;
-  color: var(--sn-stylekit-foreground-color);
-`;
-
 export const Button = styled.button`
   background-color: var(--sn-stylekit-info-color);
   color: var(--sn-stylekit-info-contrast-color);
