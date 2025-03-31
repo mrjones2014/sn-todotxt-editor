@@ -12,7 +12,7 @@ const mock = new MockStandardNotes(TEST_DATA, () => {
 const DemoApp = () => {
   const iframeRef = useRef<HTMLIFrameElement>(undefined);
   const [disabled, setDisabled] = useState(false);
-  const [theme, setTheme] = useState("light");
+  const [theme, setTheme] = useState<"light" | "dark">("dark");
 
   const onToggleDisabled = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDisabled(e.target.checked);
@@ -26,6 +26,7 @@ const DemoApp = () => {
 
   const onFrameLoad = () => {
     mock.onReady(iframeRef.current.contentWindow);
+    mock.toggleTheme(theme == "dark");
   };
   return (
     <div className="demo">
