@@ -82,7 +82,6 @@ const TodoEditor = (props: TodoEditorProps) => {
     setShowModal(false);
   };
 
-  // Get all unique projects
   const projects = useMemo(() => {
     const projectSet = new Set<string>();
     todos.forEach((todo) => {
@@ -91,7 +90,6 @@ const TodoEditor = (props: TodoEditorProps) => {
     return Array.from(projectSet);
   }, [todos]);
 
-  // Get all unique contexts
   const contexts = useMemo(() => {
     const contextSet = new Set<string>();
     todos.forEach((todo) => {
@@ -100,24 +98,19 @@ const TodoEditor = (props: TodoEditorProps) => {
     return Array.from(contextSet);
   }, [todos]);
 
-  // Filter todos based on current filters
   const filteredTodos = useMemo(() => {
     return todos.filter((todo) => {
-      // Filter by completion status
       if (filter === "active" && todo.completed) return false;
       if (filter === "completed" && !todo.completed) return false;
 
-      // Filter by project
       if (activeProject && !todo.projects.includes(activeProject)) return false;
 
-      // Filter by context
       if (activeContext && !todo.contexts.includes(activeContext)) return false;
 
       return true;
     });
   }, [todos, filter, activeProject, activeContext]);
 
-  // Toggle todo completion status
   const toggleTodoCompletion = (index: number) => {
     const newTodos = [...todos];
     const todoIndex = todos.findIndex((t) => t === filteredTodos[index]);
@@ -126,14 +119,12 @@ const TodoEditor = (props: TodoEditorProps) => {
       const todo = { ...newTodos[todoIndex] };
       todo.completed = !todo.completed;
 
-      // Add or remove completion date
       if (todo.completed) {
         todo.completionDate = new Date();
       } else {
         todo.completionDate = undefined;
       }
 
-      // Update raw string
       todo.raw = serializeLine(todo);
 
       newTodos[todoIndex] = todo;
@@ -141,13 +132,11 @@ const TodoEditor = (props: TodoEditorProps) => {
     }
   };
 
-  // Open modal to add new task
   const openAddTaskModal = () => {
     setEditingTodoIndex(null);
     setShowModal(true);
   };
 
-  // Open modal to edit task
   const openEditTaskModal = (index: number) => {
     const todoIndex = todos.findIndex((t) => t === filteredTodos[index]);
     if (todoIndex !== -1) {
@@ -156,7 +145,6 @@ const TodoEditor = (props: TodoEditorProps) => {
     }
   };
 
-  // Delete task
   const deleteTask = (index: number) => {
     const todoIndex = todos.findIndex((t) => t === filteredTodos[index]);
     if (todoIndex !== -1) {
@@ -166,7 +154,6 @@ const TodoEditor = (props: TodoEditorProps) => {
     }
   };
 
-  // Export todos to todo.txt format
   const exportTodoTxt = () => {
     const content = serializeFile(todos);
     const blob = new Blob([content], { type: "text/plain" });
@@ -180,7 +167,6 @@ const TodoEditor = (props: TodoEditorProps) => {
     URL.revokeObjectURL(url);
   };
 
-  // Format date for display
   const formatDate = (date?: Date) => {
     if (!date) return "";
     return date.toISOString().split("T")[0];

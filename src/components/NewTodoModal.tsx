@@ -48,7 +48,6 @@ const NewTodoModal = ({ onSave, onCancel, editContext }: NewTodoModalProps) => {
   const [newMetadataKey, setNewMetadataKey] = useState("");
   const [newMetadataValue, setNewMetadataValue] = useState("");
 
-  // Add metadata to task
   const addMetadata = () => {
     if (newMetadataKey.trim() && newMetadataValue.trim()) {
       setTaskMetadata({
@@ -60,18 +59,15 @@ const NewTodoModal = ({ onSave, onCancel, editContext }: NewTodoModalProps) => {
     }
   };
 
-  // Remove metadata from task
   const removeMetadata = (key: string) => {
     const newMetadata = { ...taskMetadata };
     delete newMetadata[key];
     setTaskMetadata(newMetadata);
   };
 
-  // Save task
   const saveTask = () => {
     if (!taskDescription.trim()) return;
 
-    // Create new todo item
     const newTodo: TodoItem = {
       raw: "",
       completed: false,
@@ -83,13 +79,11 @@ const NewTodoModal = ({ onSave, onCancel, editContext }: NewTodoModalProps) => {
       metadata: taskMetadata,
     };
 
-    // Update raw string
     newTodo.raw = serializeLine(newTodo);
 
     onSave(newTodo, editContext?.index);
   };
 
-  // Add project to task
   const addProject = () => {
     if (newProject.trim() && !taskProjects.includes(newProject.trim())) {
       setTaskProjects([...taskProjects, newProject.trim()]);
@@ -97,7 +91,6 @@ const NewTodoModal = ({ onSave, onCancel, editContext }: NewTodoModalProps) => {
     }
   };
 
-  // Add context to task
   const addContext = () => {
     if (newContext.trim() && !taskContexts.includes(newContext.trim())) {
       setTaskContexts([...taskContexts, newContext.trim()]);
@@ -105,14 +98,18 @@ const NewTodoModal = ({ onSave, onCancel, editContext }: NewTodoModalProps) => {
     }
   };
 
-  // Remove project from task
   const removeProject = (project: string) => {
     setTaskProjects(taskProjects.filter((p) => p !== project));
   };
 
-  // Remove context from task
   const removeContext = (context: string) => {
     setTaskContexts(taskContexts.filter((c) => c !== context));
+  };
+
+  const onSaveDueDate = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let meta = taskMetadata;
+    taskMetadata.due = e.target.value;
+    setTaskMetadata(meta);
   };
 
   return (
@@ -185,6 +182,11 @@ const NewTodoModal = ({ onSave, onCancel, editContext }: NewTodoModalProps) => {
               />
               <AddButton onClick={addContext}>Add</AddButton>
             </TagInput>
+          </FormGroup>
+
+          <FormGroup>
+            <Label>Due Date</Label>
+            <Input type="date" onChange={onSaveDueDate} value={taskMetadata.due} />
           </FormGroup>
 
           <FormGroup>
