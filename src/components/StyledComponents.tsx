@@ -490,7 +490,7 @@ export const SearchInput = styled.input`
   }
 
   &::placeholder {
-    color: var(--sn-stylekit-info-color, #888888);
+    color: var(--sn-stylekit-foreground-color, #888888);
   }
 `;
 
@@ -499,13 +499,9 @@ export const SearchIcon = styled.div`
   top: 50%;
   left: 14px;
   transform: translateY(-50%);
-  color: var(--sn-stylekit-info-color, #888888);
+  color: var(--sn-stylekit-foreground-color, #888888);
   pointer-events: none;
   transition: color 0.2s ease;
-
-  ${SearchInput}:focus + & {
-    color: var(--sn-stylekit-info-color, #4a90e2);
-  }
 `;
 
 export const ClearButton = styled.button`
@@ -518,7 +514,7 @@ export const ClearButton = styled.button`
   justify-content: center;
   width: 20px;
   height: 20px;
-  background-color: var(--sn-stylekit-info-color, #888888);
+  background-color: var(--sn-stylekit-foreground-color, #888888);
   color: var(--sn-stylekit-contrast-background-color, #2a2a2a);
   border: none;
   border-radius: 50%;
@@ -528,7 +524,7 @@ export const ClearButton = styled.button`
   transition: all 0.2s ease;
 
   &:hover {
-    background-color: var(--sn-stylekit-foreground-color, #ffffff);
+    background-color: var(--sn-stylekit-contrast-foreground-color, #ffffff);
   }
 
   &:focus {

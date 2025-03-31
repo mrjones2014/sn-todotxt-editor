@@ -38,7 +38,7 @@ const DemoApp = () => {
           </div>
           <div>
             <input id="isDark" type="checkbox" checked={theme === "dark"} onChange={onChangeTheme}></input>
-            <label htmlFor="isDark"> Dark Theme</label>
+            <label htmlFor="isDark"> Dark Mode (Midnight Theme)</label>
           </div>
           <div id="last-saved"></div>
         </div>

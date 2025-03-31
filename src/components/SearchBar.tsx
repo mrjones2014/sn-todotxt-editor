@@ -1,5 +1,7 @@
 import { ClearButton, SearchContainer, SearchIcon, SearchInput } from "./StyledComponents";
 
+const INPUT_ID = "todo_txt_search_input";
+
 interface SearchBarProps {
   value: string;
   onChange: (value: string) => void;
@@ -12,11 +14,12 @@ const SearchBar = ({ value, onChange }: SearchBarProps) => {
 
   const handleClear = () => {
     onChange("");
+    document.getElementById(INPUT_ID).focus();
   };
 
   return (
     <SearchContainer>
-      <SearchInput type="text" placeholder="Search..." value={value} onChange={handleChange} />
+      <SearchInput id={INPUT_ID} type="text" placeholder="Search..." value={value} onChange={handleChange} />
       <SearchIcon>
         <svg
           width="16"
