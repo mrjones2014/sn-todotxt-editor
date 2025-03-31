@@ -50,9 +50,10 @@ const GlobalStyle = createGlobalStyle`
 interface TodoEditorProps {
   fileContents: string;
   onFileChanged: (fileContents: string) => void;
+  editingDisabled: boolean;
 }
 
-const TodoEditor = ({ fileContents, onFileChanged }: TodoEditorProps) => {
+const TodoEditor = ({ fileContents, onFileChanged, editingDisabled }: TodoEditorProps) => {
   const [todos, setTodos] = useState<TodoItem[]>(deserializeFile(fileContents));
   const [filter, setFilter] = useState<"all" | "active" | "completed">("active");
   const [activeProject, setActiveProject] = useState<string | null>(null);
@@ -175,9 +176,11 @@ const TodoEditor = ({ fileContents, onFileChanged }: TodoEditorProps) => {
 
         <MainContent>
           <Sidebar>
-            <AddTaskButton onClick={openAddTaskModal}>
-              <span>+ Add Task</span>
-            </AddTaskButton>
+            {!editingDisabled && (
+              <AddTaskButton onClick={openAddTaskModal}>
+                <span>+ Add Task</span>
+              </AddTaskButton>
+            )}
 
             <FilterSection>
               <FilterTitle>Filters</FilterTitle>
@@ -272,7 +275,7 @@ const TodoEditor = ({ fileContents, onFileChanged }: TodoEditorProps) => {
             ) : (
               filteredTodos.map((todo, index) => (
                 <TodoItemContainer key={index} completed={todo.completed}>
-                  <Checkbox type="checkbox" checked={todo.completed} onChange={() => toggleTodoCompletion(index)} />
+                  {!editingDisabled && <Checkbox type="checkbox" checked={todo.completed} onChange={() => toggleTodoCompletion(index)} />}
                   <TodoContent>
                     <TodoDescription completed={todo.completed}>{todo.description}</TodoDescription>
                     <TodoMeta>
@@ -297,10 +300,12 @@ const TodoEditor = ({ fileContents, onFileChanged }: TodoEditorProps) => {
                       {todo.creationDate && <DateTag>Created: {formatDate(todo.creationDate)}</DateTag>}
                     </TodoMeta>
                   </TodoContent>
-                  <ActionButtons>
-                    <IconButton onClick={() => openEditTaskModal(index)}>✏️</IconButton>
-                    <IconButton onClick={() => deleteTask(index)}>🗑️</IconButton>
-                  </ActionButtons>
+                  {!editingDisabled && (
+                    <ActionButtons>
+                      <IconButton onClick={() => openEditTaskModal(index)}>✏️</IconButton>
+                      <IconButton onClick={() => deleteTask(index)}>🗑️</IconButton>
+                    </ActionButtons>
+                  )}
                 </TodoItemContainer>
               ))
             )}

@@ -8,7 +8,7 @@ const StandardNotesTodoTxtEditor = () => {
     snApi.text = file;
   }, [file]);
 
-  return <TodoEditor fileContents={file} onFileChanged={setFile} />;
+  return <TodoEditor fileContents={file} onFileChanged={setFile} editingDisabled={snApi.locked} />;
 };
 
 export default StandardNotesTodoTxtEditor;
