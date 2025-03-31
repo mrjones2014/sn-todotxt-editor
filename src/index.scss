@@ -11,21 +11,3 @@ html {
   padding: 0;
   width: 100%;
 }
-
-textarea {
-  background-color: inherit;
-  outline: none;
-  padding: 10px;
-  display: block;
-  box-sizing: border-box;
-  width: 100%;
-  line-height: 1.4;
-  resize: none;
-  color: var(--sn-stylekit-foreground-color);
-}
-
-button {
-  background-color: var(--sn-stylekit-contrast-background-color);
-  border: 1px solid var(--sn-stylekit-border-color);
-  cursor: pointer;
-}
