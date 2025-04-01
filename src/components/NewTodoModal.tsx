@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TodoItem } from "todos/types";
+import type { TodoItem } from "todos/types";
 import {
   MetadataKeyInput,
   AddButton,
@@ -107,7 +107,7 @@ const NewTodoModal = ({ onSave, onCancel, editContext }: NewTodoModalProps) => {
   };
 
   const onSaveDueDate = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let meta = taskMetadata;
+    const meta = taskMetadata;
     taskMetadata.due = e.target.value;
     setTaskMetadata(meta);
   };
@@ -116,7 +116,7 @@ const NewTodoModal = ({ onSave, onCancel, editContext }: NewTodoModalProps) => {
     <Modal>
       <ModalContent>
         <ModalHeader>
-          <ModalTitle>{!!editContext ? "Edit Task" : "Add New Task"}</ModalTitle>
+          <ModalTitle>{editContext ? "Edit Task" : "Add New Task"}</ModalTitle>
           <CloseButton onClick={onCancel}>×</CloseButton>
         </ModalHeader>
         <ModalBody>
@@ -124,7 +124,9 @@ const NewTodoModal = ({ onSave, onCancel, editContext }: NewTodoModalProps) => {
             <Label>Task Description</Label>
             <Input
               value={taskDescription}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTaskDescription(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setTaskDescription(e.target.value);
+              }}
               placeholder="What needs to be done?"
               autoFocus
             />
@@ -132,7 +134,12 @@ const NewTodoModal = ({ onSave, onCancel, editContext }: NewTodoModalProps) => {
 
           <FormGroup>
             <Label>Priority</Label>
-            <Select value={taskPriority} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setTaskPriority(e.target.value)}>
+            <Select
+              value={taskPriority}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                setTaskPriority(e.target.value);
+              }}
+            >
               <option value="">No Priority</option>
               {["A", "B", "C", "D", "E"].map((priority) => (
                 <option key={priority} value={priority}>
@@ -148,16 +155,26 @@ const NewTodoModal = ({ onSave, onCancel, editContext }: NewTodoModalProps) => {
               {taskProjects.map((project) => (
                 <Tag key={project}>
                   +{project}
-                  <RemoveTagButton onClick={() => removeProject(project)}>×</RemoveTagButton>
+                  <RemoveTagButton
+                    onClick={() => {
+                      removeProject(project);
+                    }}
+                  >
+                    ×
+                  </RemoveTagButton>
                 </Tag>
               ))}
             </TagsContainer>
             <TagInput>
               <TagInputField
                 value={newProject}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewProject(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setNewProject(e.target.value);
+                }}
                 placeholder="Add project..."
-                onKeyDown={(e: React.KeyboardEvent) => e.key === "Enter" && addProject()}
+                onKeyDown={(e: React.KeyboardEvent) => {
+                  if (e.key === "Enter") addProject();
+                }}
               />
               <AddButton onClick={addProject}>Add</AddButton>
             </TagInput>
@@ -169,16 +186,26 @@ const NewTodoModal = ({ onSave, onCancel, editContext }: NewTodoModalProps) => {
               {taskContexts.map((context) => (
                 <Tag key={context}>
                   @{context}
-                  <RemoveTagButton onClick={() => removeContext(context)}>×</RemoveTagButton>
+                  <RemoveTagButton
+                    onClick={() => {
+                      removeContext(context);
+                    }}
+                  >
+                    ×
+                  </RemoveTagButton>
                 </Tag>
               ))}
             </TagsContainer>
             <TagInput>
               <TagInputField
                 value={newContext}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewContext(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setNewContext(e.target.value);
+                }}
                 placeholder="Add context..."
-                onKeyDown={(e: React.KeyboardEvent) => e.key === "Enter" && addContext()}
+                onKeyDown={(e: React.KeyboardEvent) => {
+                  if (e.key === "Enter") addContext();
+                }}
               />
               <AddButton onClick={addContext}>Add</AddButton>
             </TagInput>
@@ -195,17 +222,33 @@ const NewTodoModal = ({ onSave, onCancel, editContext }: NewTodoModalProps) => {
               {Object.entries(taskMetadata).map(([key, value]) => (
                 <Tag key={key}>
                   {key}:{value}
-                  <RemoveTagButton onClick={() => removeMetadata(key)}>×</RemoveTagButton>
+                  <RemoveTagButton
+                    onClick={() => {
+                      removeMetadata(key);
+                    }}
+                  >
+                    ×
+                  </RemoveTagButton>
                 </Tag>
               ))}
             </TagsContainer>
             <MetadataInputGroup>
-              <MetadataKeyInput value={newMetadataKey} onChange={(e) => setNewMetadataKey(e.target.value)} placeholder="Key" />
+              <MetadataKeyInput
+                value={newMetadataKey}
+                onChange={(e) => {
+                  setNewMetadataKey(e.target.value);
+                }}
+                placeholder="Key"
+              />
               <MetadataValueInput
                 value={newMetadataValue}
-                onChange={(e) => setNewMetadataValue(e.target.value)}
+                onChange={(e) => {
+                  setNewMetadataValue(e.target.value);
+                }}
                 placeholder="Value"
-                onKeyDown={(e) => e.key === "Enter" && addMetadata()}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") addMetadata();
+                }}
               />
               <AddButton onClick={addMetadata}>Add</AddButton>
             </MetadataInputGroup>
@@ -214,7 +257,7 @@ const NewTodoModal = ({ onSave, onCancel, editContext }: NewTodoModalProps) => {
         <ModalFooter>
           <SecondaryButton onClick={onCancel}>Cancel</SecondaryButton>
           <Button onClick={saveTask} disabled={taskDescription == ""}>
-            {!!editContext ? "Update Task" : "Add Task"}
+            {editContext ? "Update Task" : "Add Task"}
           </Button>
         </ModalFooter>
       </ModalContent>

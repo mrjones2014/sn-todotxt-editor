@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { createGlobalStyle } from "styled-components";
 import { deserializeFile, serializeFile, serializeLine } from "todos/parser";
-import { TodoItem } from "todos/types";
+import type { TodoItem } from "todos/types";
 import {
   MenuButton,
   ActionButtons,
@@ -71,7 +71,7 @@ const TodoEditor = ({ fileContents, onFileChanged, editingDisabled, isMobile }: 
 
   useEffect(() => {
     onFileChanged(serializeFile(todos));
-  }, [todos]);
+  }, [onFileChanged, todos]);
 
   const handleOverlayClick = () => {
     if (window.innerWidth <= 768) {
@@ -87,16 +87,18 @@ const TodoEditor = ({ fileContents, onFileChanged, editingDisabled, isMobile }: 
     };
 
     window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [isMobile]);
 
   const onSave = (todo: TodoItem, index?: number) => {
     if (index != null) {
-      let newTodos = [...todos];
+      const newTodos = [...todos];
       newTodos[index] = todo;
       setTodos(newTodos);
     } else {
-      let newTodos = [todo, ...todos];
+      const newTodos = [todo, ...todos];
       setTodos(newTodos);
     }
 
@@ -276,7 +278,11 @@ const TodoEditor = ({ fileContents, onFileChanged, editingDisabled, isMobile }: 
 
         <MainContent>
           <MainControlsContainer>
-            <MenuButton onClick={() => setSidebarOpen(!sidebarOpen)}>
+            <MenuButton
+              onClick={() => {
+                setSidebarOpen(!sidebarOpen);
+              }}
+            >
               <HamburgerIcon />
             </MenuButton>
             <SearchBar value={searchText} onChange={setSearchText} />
@@ -306,7 +312,15 @@ const TodoEditor = ({ fileContents, onFileChanged, editingDisabled, isMobile }: 
             ) : (
               filteredTodos.map((todo, index) => (
                 <TodoItemContainer key={index} completed={todo.completed}>
-                  {!editingDisabled && <Checkbox type="checkbox" checked={todo.completed} onChange={() => toggleTodoCompletion(index)} />}
+                  {!editingDisabled && (
+                    <Checkbox
+                      type="checkbox"
+                      checked={todo.completed}
+                      onChange={() => {
+                        toggleTodoCompletion(index);
+                      }}
+                    />
+                  )}
                   <TodoContent>
                     <TodoDescription completed={todo.completed}>{todo.description}</TodoDescription>
                     <TodoMeta>
@@ -333,8 +347,20 @@ const TodoEditor = ({ fileContents, onFileChanged, editingDisabled, isMobile }: 
                   </TodoContent>
                   {!editingDisabled && (
                     <ActionButtons>
-                      <IconButton onClick={() => openEditTaskModal(index)}>✏️</IconButton>
-                      <IconButton onClick={() => deleteTask(index)}>🗑️</IconButton>
+                      <IconButton
+                        onClick={() => {
+                          openEditTaskModal(index);
+                        }}
+                      >
+                        ✏️
+                      </IconButton>
+                      <IconButton
+                        onClick={() => {
+                          deleteTask(index);
+                        }}
+                      >
+                        🗑️
+                      </IconButton>
                     </ActionButtons>
                   )}
                 </TodoItemContainer>

@@ -1,10 +1,10 @@
-import { TodoItem } from "./types";
+import type { TodoItem } from "./types";
 
 /**
  * Parse a todo.txt file content into structured TodoItem objects
  */
 export const deserializeFile = (fileContent: string): TodoItem[] => {
-  const lines = fileContent.split("\n").filter((line) => line.trim().length > 0);
+  const lines = fileContent.split("\n").filter((line) => line.trim() !== "");
   return lines.map(deserializeLine);
 };
 
@@ -26,7 +26,7 @@ export const deserializeLine = (line: string): TodoItem => {
     remaining = remaining.substring(2);
 
     // Extract completion date if present
-    const dateMatch = remaining.match(/^(\d{4}-\d{2}-\d{2})\s+/);
+    const dateMatch = /^(\d{4}-\d{2}-\d{2})\s+/.exec(remaining);
     if (dateMatch) {
       completionDate = new Date(dateMatch[1]);
       remaining = remaining.substring(dateMatch[0].length);
@@ -34,14 +34,14 @@ export const deserializeLine = (line: string): TodoItem => {
   }
 
   // Extract priority if present
-  const priorityMatch = remaining.match(/^\(([A-Z])\)\s+/);
+  const priorityMatch = /^\(([A-Z])\)\s+/.exec(remaining);
   if (priorityMatch) {
     priority = priorityMatch[1];
     remaining = remaining.substring(priorityMatch[0].length);
   }
 
   // Extract creation date if present
-  const creationDateMatch = remaining.match(/^(\d{4}-\d{2}-\d{2})\s+/);
+  const creationDateMatch = /^(\d{4}-\d{2}-\d{2})\s+/.exec(remaining);
   if (creationDateMatch) {
     creationDate = new Date(creationDateMatch[1]);
     remaining = remaining.substring(creationDateMatch[0].length);
@@ -121,9 +121,7 @@ const extractMetadata = (line: string): Record<string, string> => {
 /**
  * Format a date to YYYY-MM-DD
  */
-const formatDate = (date: Date): string => {
-  return date.toISOString().split("T")[0];
-};
+const formatDate = (date: Date): string => date.toISOString().split("T")[0];
 
 /**
  * Convert a TodoItem back to a todo.txt line format
@@ -150,7 +148,7 @@ export const serializeLine = (item: TodoItem): string => {
   }
 
   // Add description (without projects, contexts, metadata)
-  let description = item.description;
+  let { description } = item;
 
   // Remove projects, contexts, and metadata from description
   item.projects.forEach((project) => {
@@ -177,6 +175,4 @@ export const serializeLine = (item: TodoItem): string => {
   return [...parts, ...additions].join(" ");
 };
 
-export const serializeFile = (todos: TodoItem[]): string => {
-  return todos.map(serializeLine).join("\n");
-};
+export const serializeFile = (todos: TodoItem[]): string => todos.map(serializeLine).join("\n");

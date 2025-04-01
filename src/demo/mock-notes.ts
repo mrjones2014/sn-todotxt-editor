@@ -1,5 +1,5 @@
 import { REGISTERED_EVENT, STREAM_EVENT_DATA } from "./mock-events";
-import { TestData } from "./test-data";
+import type { TestData } from "./test-data";
 
 let componentData = {};
 
@@ -10,7 +10,7 @@ export class MockStandardNotes {
 
   constructor(
     data: TestData,
-    private onSave: () => void,
+    private readonly onSave: () => void,
   ) {
     this.updateStream(data);
     window.addEventListener("message", this.handleMessage.bind(this));
@@ -25,7 +25,7 @@ export class MockStandardNotes {
   }
 
   public toggleLock(isLocked: boolean) {
-    this.streamData.item.content.appData["org.standardnotes.sn"]["locked"] = isLocked;
+    this.streamData.item.content.appData["org.standardnotes.sn"].locked = isLocked;
     this.childWindow.postMessage(
       {
         action: "reply",
@@ -62,7 +62,7 @@ export class MockStandardNotes {
   }
 
   private handleMessage(e: MessageEvent) {
-    const data = e.data;
+    const {data} = e;
     if (data.action === "stream-context-item") {
       this.streamEvent = data;
       this.childWindow.postMessage(

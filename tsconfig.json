@@ -13,6 +13,7 @@
     "declaration": true,
     "rootDir": "src",
     "strict": false,
+    "strictNullChecks": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": false,
@@ -24,7 +25,6 @@
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,
     "suppressImplicitAnyIndexErrors": true,
-    "strictNullChecks": false,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true
   },

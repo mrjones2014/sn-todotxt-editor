@@ -1,6 +1,7 @@
 export interface TestData {
   title: string;
   text: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   meta?: any;
 }
 
