@@ -7,7 +7,7 @@ import { version } from "./package.json";
 import VitePluginZip from "vite-plugin-zip";
 
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [
     preact(),
 
@@ -52,10 +52,12 @@ export default defineConfig({
 
     // Create zip file
     VitePluginZip({
-      outDir: "dist",
-      outFileName: "latest.zip",
+      dir: "dist",
+      outputName: "latest",
     }),
   ],
+
+  base: mode.toLowerCase() === "production" ? "/sn-todotxt-editor/" : "",
 
   // Resolve configuration
   resolve: {
@@ -103,4 +105,4 @@ export default defineConfig({
       },
     },
   },
-});
+}));
