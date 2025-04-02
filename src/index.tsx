@@ -5,7 +5,9 @@ import { createRoot } from "react-dom/client";
 import snApi from "sn-extension-api";
 import StandardNotesTodoTxtEditor from "./components/StandardNotesTodoTxtEditor";
 
-const root = createRoot(document.getElementById("root"));
+const root = createRoot(document.getElementById("root")!);
+
+document.addEventListener("message", console.log);
 
 export const rerenderRoot = () => {
   root.render(
