@@ -1,8 +1,8 @@
 import React, { useRef, useState } from "react";
-import { TEST_DATA } from "./test-data";
+import { genTestData } from "./test-data";
 import { MockStandardNotes } from "./mock-notes";
 
-const mock = new MockStandardNotes(TEST_DATA, () => {
+const mock = new MockStandardNotes(genTestData(), () => {
   const el = document.getElementById("last-saved");
   if (el) {
     el.textContent = `Last Saved: ${new Date().toLocaleTimeString()}`;
@@ -10,7 +10,7 @@ const mock = new MockStandardNotes(TEST_DATA, () => {
 });
 
 const DemoApp = () => {
-  const iframeRef = useRef<HTMLIFrameElement>(undefined);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
   const [disabled, setDisabled] = useState(false);
   const [theme, setTheme] = useState<"light" | "dark">("dark");
 
@@ -25,7 +25,7 @@ const DemoApp = () => {
   };
 
   const onFrameLoad = () => {
-    mock.onReady(iframeRef.current.contentWindow);
+    mock.onReady(iframeRef.current?.contentWindow);
     mock.toggleTheme(theme == "dark");
   };
   return (

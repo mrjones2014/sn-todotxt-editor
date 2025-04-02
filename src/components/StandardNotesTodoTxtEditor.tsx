@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import snApi from "sn-extension-api";
 import TodoEditor from "./TodoEditor";
-import { FilterFields } from "./Filters";
+import { DEFAULT_FILTERS, FilterFields } from "./Filters";
 
 const StandardNotesTodoTxtEditor = () => {
   const [file, setFile] = useState(snApi.text);
-  const [filters, setFilters] = useState<FilterFields>(snApi.meta?.lastUsedFilters ?? {});
+  const [filters, setFilters] = useState<FilterFields>(snApi.meta?.lastUsedFilters ?? DEFAULT_FILTERS);
 
   useEffect(() => {
     snApi.text = file;
