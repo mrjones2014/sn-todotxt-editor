@@ -14,11 +14,11 @@ type DateFilters = {
 
 type DateCounts = Record<keyof DateFilters, number>;
 
-type CustomFilters = {
-  state: "active" | "completed";
+export type FilterFields = DateFilters & {
+  state?: "active" | "completed";
+  project?: string;
+  context?: string;
 };
-
-export type FilterFields = Partial<Pick<TodoItem, "projects" | "contexts"> & CustomFilters> & DateFilters;
 
 const computeDateFilters = (now: Date, dueDateStr: string): DateFilters | undefined => {
   try {
@@ -54,14 +54,6 @@ const toggle = (value: string, values: string[] | undefined) => {
 
   values.splice(index, 1);
   return values;
-};
-
-const matches = (inputs: string[], queries?: string[]) => {
-  if (queries == null || queries.length == 0) {
-    return true;
-  }
-
-  return queries.every((q) => inputs.includes(q));
 };
 
 interface FiltersProps {
@@ -129,8 +121,8 @@ const Filters = forwardRef<FiltersComponent, FiltersProps>(({ todos, searchText,
     return filtered.filter((todo) => {
       if (filters.state === "active" && todo.completed) return false;
       if (filters.state === "completed" && !todo.completed) return false;
-      if (!matches(todo.projects, filters.projects)) return false;
-      if (!matches(todo.contexts, filters.contexts)) return false;
+      if (filters.project != null && !todo.projects.includes(filters.project)) return false;
+      if (filters.context != null && !todo.contexts.includes(filters.context)) return false;
 
       if (filters.overdue || filters.dueSoon || filters.dueToday) {
         const status = computeDateFilters(now, todo.metadata.due);
@@ -257,11 +249,16 @@ const Filters = forwardRef<FiltersComponent, FiltersProps>(({ todos, searchText,
           {projects.map((project) => (
             <FilterItem
               key={project}
-              active={filters.projects?.includes(project)}
+              active={filters.project === project}
               onClick={() => {
-                console.log("ayo???", project);
                 setFilters((filters) => {
-                  return { ...filters, projects: toggle(project, filters.projects) };
+                  const newFilters = { ...filters };
+                  if (newFilters.project === project) {
+                    newFilters.project = undefined;
+                  } else {
+                    newFilters.project = project;
+                  }
+                  return newFilters;
                 });
               }}
             >
@@ -278,11 +275,16 @@ const Filters = forwardRef<FiltersComponent, FiltersProps>(({ todos, searchText,
           {contexts.map((context) => (
             <FilterItem
               key={context}
-              active={filters.contexts?.includes(context)}
+              active={filters.context === context}
               onClick={() => {
                 setFilters((filters) => {
-                  filters.contexts = toggle(context, filters.contexts);
-                  return filters;
+                  const newFilters = { ...filters };
+                  if (newFilters.context === context) {
+                    newFilters.context = undefined;
+                  } else {
+                    newFilters.context = context;
+                  }
+                  return newFilters;
                 });
               }}
             >
