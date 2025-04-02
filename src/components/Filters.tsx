@@ -140,8 +140,6 @@ const Filters = forwardRef<FiltersComponent, FiltersProps>(({ todos, searchText,
     onFiltered(filteredTodos, filters);
   }, [filteredTodos, onFiltered, filters]);
 
-  console.log(filters);
-
   return (
     <>
       <FilterSection>
