@@ -7,8 +7,6 @@ import StandardNotesTodoTxtEditor from "./components/StandardNotesTodoTxtEditor"
 
 const root = createRoot(document.getElementById("root")!);
 
-document.addEventListener("message", console.log);
-
 export const rerenderRoot = () => {
   root.render(
     <React.StrictMode>
