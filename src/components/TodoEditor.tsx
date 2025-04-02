@@ -32,7 +32,7 @@ import {
 } from "./StyledComponents";
 import NewTodoModal from "./NewTodoModal";
 import SearchBar from "./SearchBar";
-import Filters, { FiltersComponent } from "./Filters";
+import Filters, { FilterFields, FiltersComponent } from "./Filters";
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -45,9 +45,11 @@ interface TodoEditorProps {
   onFileChanged: (fileContents: string) => void;
   editingDisabled: boolean;
   isMobile: boolean;
+  initialFilters: FilterFields | undefined;
+  onFiltered: (fields: FilterFields) => void;
 }
 
-const TodoEditor = ({ fileContents, onFileChanged, editingDisabled, isMobile }: TodoEditorProps) => {
+const TodoEditor = ({ fileContents, onFileChanged, editingDisabled, isMobile, initialFilters, onFiltered }: TodoEditorProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(isMobile || window.innerWidth > 768);
   const [todos, setTodos] = useState<TodoItem[]>(deserializeFile(fileContents));
   const [showModal, setShowModal] = useState(false);
@@ -145,6 +147,11 @@ const TodoEditor = ({ fileContents, onFileChanged, editingDisabled, isMobile }: 
     return date.toISOString().split("T")[0];
   };
 
+  const handleOnFiltered = (items: TodoItem[], filters: FilterFields) => {
+    setFilteredTodos(items);
+    onFiltered(filters);
+  };
+
   return (
     <>
       <GlobalStyle />
@@ -152,7 +159,7 @@ const TodoEditor = ({ fileContents, onFileChanged, editingDisabled, isMobile }: 
       <AppContainer>
         <Sidebar isOpen={sidebarOpen}>
           <SidebarContent>
-            <Filters todos={todos} onFiltered={setFilteredTodos} searchText={searchText} ref={filtersRef} />
+            <Filters todos={todos} onFiltered={handleOnFiltered} searchText={searchText} initialFilters={initialFilters} ref={filtersRef} />
           </SidebarContent>
         </Sidebar>
         <Overlay isOpen={sidebarOpen && window.innerWidth <= 768} onClick={handleOverlayClick} />

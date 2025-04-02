@@ -29,9 +29,10 @@ const matches = (inputs: string[], queries?: string[]) => {
 };
 
 interface FiltersProps {
+  initialFilters: FilterFields | undefined;
   todos: TodoItem[];
   searchText: string;
-  onFiltered: (filteredTodos: TodoItem[]) => void;
+  onFiltered: (filteredTodos: TodoItem[], filters: FilterFields) => void;
 }
 
 const Filters = forwardRef<FiltersComponent, FiltersProps>(({ todos, searchText, onFiltered }, ref) => {
@@ -76,8 +77,8 @@ const Filters = forwardRef<FiltersComponent, FiltersProps>(({ todos, searchText,
   }, [todos, searchText, filters]);
 
   useEffect(() => {
-    onFiltered(filteredTodos);
-  }, [filteredTodos, onFiltered]);
+    onFiltered(filteredTodos, filters);
+  }, [filteredTodos, onFiltered, filters]);
 
   console.log(filters);
 
