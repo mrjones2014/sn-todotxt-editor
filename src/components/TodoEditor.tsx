@@ -15,6 +15,8 @@ import {
   EmptyStateIcon,
   EmptyStateText,
   HamburgerIcon,
+  TrashIcon,
+  PencilIcon,
   IconButton,
   MainContent,
   MetadataTag,
@@ -234,18 +236,20 @@ const TodoEditor = ({ fileContents, onFileChanged, editingDisabled, isMobile, in
                   {!editingDisabled && (
                     <ActionButtons>
                       <IconButton
+                        color="warning"
                         onClick={() => {
                           openEditTaskModal(index);
                         }}
                       >
-                        ✏️
+                        <PencilIcon />
                       </IconButton>
                       <IconButton
+                        color="danger"
                         onClick={() => {
                           deleteTask(index);
                         }}
                       >
-                        🗑️
+                        <TrashIcon />
                       </IconButton>
                     </ActionButtons>
                   )}

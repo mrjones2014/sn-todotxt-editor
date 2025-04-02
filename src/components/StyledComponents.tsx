@@ -87,6 +87,22 @@ export const HamburgerIcon = () => (
   </svg>
 );
 
+export const TrashIcon = () => (
+  <svg viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" role="img">
+    <path d="M7.5 2.5v.833H3.333V5h.834v10.833A1.666 1.666 0 0 0 5.833 17.5h8.334a1.667 1.667 0 0 0 1.666-1.667V5h.834V3.333H12.5V2.5h-5ZM5.833 5h8.334v10.833H5.833V5ZM7.5 6.667v7.5h1.667v-7.5H7.5Zm3.333 0v7.5H12.5v-7.5h-1.667Z"></path>
+  </svg>
+);
+
+export const PencilIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125"
+    />
+  </svg>
+);
+
 export const Sidebar = styled.aside<{ isOpen: boolean }>`
   width: ${(props) => (props.isOpen ? "250px" : "0")};
   height: 100vh;
@@ -506,7 +522,18 @@ export const ActionButtons = styled.div`
   margin-left: auto;
 `;
 
-export const IconButton = styled.button`
+const iconBtnColor = (color?: "danger" | "warning") => {
+  switch (color) {
+    case "danger":
+      return "--sn-stylekit-danger-color";
+    case "warning":
+      return "--sn-stylekit-warning-color";
+    default:
+      return "--sn-stylekit-foreground-color";
+  }
+};
+
+export const IconButton = styled.button<{ color?: "danger" | "warning" }>`
   background: none;
   border: none;
   color: var(--sn-stylekit-passive-color-1);
@@ -520,7 +547,7 @@ export const IconButton = styled.button`
 
   &:hover {
     background-color: var(--sn-stylekit-secondary-background-color);
-    color: var(--sn-stylekit-foreground-color);
+    color: var(${(props) => iconBtnColor(props.color)});
   }
 `;
 
