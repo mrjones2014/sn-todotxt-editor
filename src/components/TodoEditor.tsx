@@ -41,14 +41,6 @@ import SearchBar from "./SearchBar";
 const GlobalStyle = createGlobalStyle`
   * {
     box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  }
-
-  body {
-    background-color: var(--sn-stylekit-background-color);
-    color: var(--sn-stylekit-foreground-color);
   }
 `;
 
