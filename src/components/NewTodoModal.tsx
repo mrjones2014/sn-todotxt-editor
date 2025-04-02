@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { TodoItem } from "todos/types";
+import type { TodoItem } from "../todos/types";
 import {
   MetadataKeyInput,
   AddButton,
@@ -24,7 +24,7 @@ import {
   SecondaryButton,
   Button,
 } from "./StyledComponents";
-import { serializeLine } from "todos/parser";
+import { serializeLine } from "../todos/parser";
 
 interface EditContext {
   index: number;

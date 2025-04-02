@@ -1,13 +1,12 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { createGlobalStyle } from "styled-components";
-import { deserializeFile, serializeFile, serializeLine } from "todos/parser";
-import type { TodoItem } from "todos/types";
+import { deserializeFile, serializeFile, serializeLine } from "../todos/parser";
+import type { TodoItem } from "../todos/types";
 import {
   MenuButton,
   ActionButtons,
   AddTaskButton,
   AppContainer,
-  Badge,
   Button,
   Checkbox,
   ContextTag,
@@ -15,9 +14,6 @@ import {
   EmptyState,
   EmptyStateIcon,
   EmptyStateText,
-  FilterItem,
-  FilterSection,
-  FilterTitle,
   HamburgerIcon,
   IconButton,
   MainContent,
@@ -35,8 +31,8 @@ import {
   MainControlsContainer,
 } from "./StyledComponents";
 import NewTodoModal from "./NewTodoModal";
-import Fuse from "fuse.js";
 import SearchBar from "./SearchBar";
+import Filters, { FiltersComponent } from "./Filters";
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -54,12 +50,11 @@ interface TodoEditorProps {
 const TodoEditor = ({ fileContents, onFileChanged, editingDisabled, isMobile }: TodoEditorProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(isMobile || window.innerWidth > 768);
   const [todos, setTodos] = useState<TodoItem[]>(deserializeFile(fileContents));
-  const [filter, setFilter] = useState<"all" | "active" | "completed">("active");
-  const [activeProject, setActiveProject] = useState<string | null>(null);
-  const [activeContext, setActiveContext] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [editingTodoIndex, setEditingTodoIndex] = useState<number | null>(null);
   const [searchText, setSearchText] = useState("");
+  const [filteredTodos, setFilteredTodos] = useState(todos);
+  const filtersRef = useRef<FiltersComponent>(null);
 
   useEffect(() => {
     onFileChanged(serializeFile(todos));
@@ -101,41 +96,6 @@ const TodoEditor = ({ fileContents, onFileChanged, editingDisabled, isMobile }: 
     setEditingTodoIndex(null);
     setShowModal(false);
   };
-
-  const projects = useMemo(() => {
-    const projectSet = new Set<string>();
-    todos.forEach((todo) => {
-      todo.projects.forEach((project) => projectSet.add(project));
-    });
-    return Array.from(projectSet);
-  }, [todos]);
-
-  const contexts = useMemo(() => {
-    const contextSet = new Set<string>();
-    todos.forEach((todo) => {
-      todo.contexts.forEach((context) => contextSet.add(context));
-    });
-    return Array.from(contextSet);
-  }, [todos]);
-
-  const filteredTodos = useMemo(() => {
-    let filtered = todos;
-    let fuse: Fuse<TodoItem>;
-    if (searchText != "") {
-      fuse = new Fuse(todos, { keys: ["raw"] });
-      filtered = fuse.search(searchText).map((result) => result.item);
-    }
-    return filtered.filter((todo) => {
-      if (filter === "active" && todo.completed) return false;
-      if (filter === "completed" && !todo.completed) return false;
-
-      if (activeProject && !todo.projects.includes(activeProject)) return false;
-
-      if (activeContext && !todo.contexts.includes(activeContext)) return false;
-
-      return true;
-    });
-  }, [todos, searchText, filter, activeProject, activeContext]);
 
   const toggleTodoCompletion = (index: number) => {
     const newTodos = [...todos];
@@ -192,78 +152,7 @@ const TodoEditor = ({ fileContents, onFileChanged, editingDisabled, isMobile }: 
       <AppContainer>
         <Sidebar isOpen={sidebarOpen}>
           <SidebarContent>
-            <FilterSection>
-              <FilterTitle>Filters</FilterTitle>
-              <FilterItem
-                active={filter === "active"}
-                onClick={() => {
-                  setFilter("active");
-                  setActiveProject(null);
-                  setActiveContext(null);
-                }}
-              >
-                Active
-                <Badge>{todos.filter((t) => !t.completed).length}</Badge>
-              </FilterItem>
-              <FilterItem
-                active={filter === "completed"}
-                onClick={() => {
-                  setFilter("completed");
-                  setActiveProject(null);
-                  setActiveContext(null);
-                }}
-              >
-                Completed
-                <Badge>{todos.filter((t) => t.completed).length}</Badge>
-              </FilterItem>
-              <FilterItem
-                active={filter === "all"}
-                onClick={() => {
-                  setFilter("all");
-                  setActiveProject(null);
-                  setActiveContext(null);
-                }}
-              >
-                All Tasks
-                <Badge>{todos.length}</Badge>
-              </FilterItem>
-            </FilterSection>
-
-            {projects.length > 0 && (
-              <FilterSection>
-                <FilterTitle>Projects</FilterTitle>
-                {projects.map((project) => (
-                  <FilterItem
-                    key={project}
-                    active={activeProject === project}
-                    onClick={() => {
-                      setActiveProject(activeProject === project ? null : project);
-                    }}
-                  >
-                    +{project}
-                    <Badge>{todos.filter((t) => t.projects.includes(project)).length}</Badge>
-                  </FilterItem>
-                ))}
-              </FilterSection>
-            )}
-
-            {contexts.length > 0 && (
-              <FilterSection>
-                <FilterTitle>Contexts</FilterTitle>
-                {contexts.map((context) => (
-                  <FilterItem
-                    key={context}
-                    active={activeContext === context}
-                    onClick={() => {
-                      setActiveContext(activeContext === context ? null : context);
-                    }}
-                  >
-                    @{context}
-                    <Badge>{todos.filter((t) => t.contexts.includes(context)).length}</Badge>
-                  </FilterItem>
-                ))}
-              </FilterSection>
-            )}
+            <Filters todos={todos} onFiltered={setFilteredTodos} searchText={searchText} ref={filtersRef} />
           </SidebarContent>
         </Sidebar>
         <Overlay isOpen={sidebarOpen && window.innerWidth <= 768} onClick={handleOverlayClick} />
@@ -292,9 +181,7 @@ const TodoEditor = ({ fileContents, onFileChanged, editingDisabled, isMobile }: 
                 <EmptyStateText>No tasks match your current filters</EmptyStateText>
                 <Button
                   onClick={() => {
-                    setFilter("all");
-                    setActiveProject(null);
-                    setActiveContext(null);
+                    filtersRef.current?.clearFilters();
                     setSearchText("");
                   }}
                 >
