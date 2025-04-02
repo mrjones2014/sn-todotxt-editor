@@ -2,9 +2,8 @@
   "name": "sn-extension-template",
   "version": "1.0.0",
   "scripts": {
-    "start": "webpack serve --mode development",
-    "build": "webpack",
-    "preview": "live-server --cors dist/ --open=/demo.html"
+    "start": "vite",
+    "build": "vite build"
   },
   "dependencies": {
     "@preact/compat": "^18.3.1",
@@ -14,32 +13,19 @@
     "styled-components": "^6.1.16"
   },
   "devDependencies": {
-    "@babel/core": "^7.26.10",
-    "@babel/plugin-transform-react-jsx": "^7.25.9",
-    "@babel/preset-env": "^7.26.9",
-    "@babel/preset-typescript": "^7.27.0",
     "@eslint/js": "^9.23.0",
+    "@preact/preset-vite": "^2.10.1",
     "@types/react": "^19.0.12",
     "@types/react-dom": "^19.0.4",
-    "babel-loader": "^10.0.0",
-    "copy-webpack-plugin": "^13.0.0",
-    "css-loader": "^7.1.2",
     "eslint": "^9.23.0",
     "eslint-plugin-react": "^7.37.4",
     "eslint-plugin-react-hooks": "^5.2.0",
-    "html-webpack-plugin": "^5.6.3",
-    "live-server": "^1.2.2",
     "sass": "^1.86.1",
-    "sass-loader": "^16.0.5",
-    "style-loader": "^4.0.0",
-    "ts-loader": "^9.5.2",
-    "ts-node": "^10.9.2",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.29.0",
-    "url-loader": "^4.1.1",
-    "webpack": "^5.98.0",
-    "webpack-cli": "^6.0.1",
-    "webpack-dev-server": "^5.2.1",
-    "zip-webpack-plugin": "^4.0.3"
+    "vite": "^6.2.4",
+    "vite-plugin-html": "^3.2.2",
+    "vite-plugin-static-copy": "^2.3.0",
+    "vite-plugin-zip": "^1.0.1"
   }
 }

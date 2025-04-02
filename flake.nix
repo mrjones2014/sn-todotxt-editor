@@ -35,6 +35,11 @@
                 # Add other patterns as needed
                 pkgs.lib.hasSuffix ".log" baseName);
           };
+
+          shellHook = ''
+            pnpm install
+            export PATH="$PATH:./node_modules/.bin"
+          '';
         };
       });
 }
